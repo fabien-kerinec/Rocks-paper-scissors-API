@@ -8,8 +8,8 @@ class Game {
         this.players = []
         this.players.push({
             idPlayer,
-            pseudo : idPlayer,
-            choice : null,
+            pseudo: idPlayer,
+            choice: null,
             point: 0
         })
         console.log('New session : ', this.session)
@@ -31,7 +31,7 @@ class Game {
 
     changePseudo(idPlayer, pseudo) {
         this.players.forEach(player => {
-            if(player.idPlayer == idPlayer) {
+            if (player.idPlayer == idPlayer) {
                 player.pseudo = pseudo
             }
         });
@@ -55,75 +55,90 @@ class Game {
                         this.playerEgality()
                         results.win.en = "Egality !"
                         results.win.fr = "Egalité !"
-                    break;
+                        results.win.it = "Parità!"
+                        break;
                     case PAPER:
                         this.playerWin(localPlayer[1].idPlayer)
                         results.win.en = localPlayer[1].pseudo
                         results.win.fr = localPlayer[1].pseudo
+                        results.win.it = localPlayer[1].pseudo
 
-                        results.result.en = 'The sheet covers the stone'
+                        results.result.en = 'Paper beats rock'
                         results.result.fr = 'La feuille couvre la pierre'
-                    break;
+                        results.result.it = 'Carta batte pietra'
+                        break;
                     case SCISSORS:
                         this.playerWin(localPlayer[0].idPlayer)
                         results.win.en = localPlayer[0].pseudo
                         results.win.fr = localPlayer[0].pseudo
+                        results.win.it = localPlayer[0].pseudo
 
-                        results.result.en = 'The stone breaks the scissors'
+                        results.result.en = 'Rock beats scissors'
                         results.result.fr = 'La pierre brise les ciseaux'
-                    break;
+                        results.result.it = 'Pietra batte forbici'
+                        break;
                 }
-            break;
+                break;
             case PAPER:
                 switch (localPlayer[1].choice) {
                     case ROCK:
                         this.playerWin(localPlayer[0].idPlayer)
                         results.win.en = localPlayer[0].pseudo
                         results.win.fr = localPlayer[0].pseudo
+                        results.win.it = localPlayer[0].pseudo
 
-                        results.result.en = 'The sheet covers the stone'
+                        results.result.en = 'Paper beats rock'
                         results.result.fr = 'La feuille couvre la pierre'
-                    break;
+                        results.result.it = 'Carta batte pietra'
+                        break;
                     case PAPER:
                         this.playerEgality()
                         results.win.en = "Egality !"
                         results.win.fr = "Egalité !"
-                    break;
+                        results.win.it = "Parità!"
+                        break;
                     case SCISSORS:
                         this.playerWin(localPlayer[1].idPlayer)
                         results.win.en = localPlayer[1].pseudo
                         results.win.fr = localPlayer[1].pseudo
+                        results.win.it = localPlayer[1].pseudo
 
-                        results.result.en = 'Scissors cut the sheet'
+                        results.result.en = 'Scissors cuts paper'
                         results.result.fr = 'Les ciseaux coupent la feuille'
-                    break;
+                        results.result.it = 'Forbici batte carta'
+                        break;
                 }
-            break;
+                break;
             case SCISSORS:
                 switch (localPlayer[1].choice) {
                     case ROCK:
                         this.playerWin(localPlayer[1].idPlayer)
                         results.win.en = localPlayer[1].pseudo
                         results.win.fr = localPlayer[1].pseudo
+                        results.win.it = localPlayer[1].pseudo
 
-                        results.result.en = 'The stone breaks the scissors'
+                        results.result.en = 'Rock beats scissors'
                         results.result.fr = 'La pierre brise les ciseaux'
-                    break;
+                        results.result.it = 'Pietra batte forbici'
+                        break;
                     case PAPER:
                         this.playerWin(localPlayer[0].idPlayer)
                         results.win.en = localPlayer[0].pseudo
                         results.win.fr = localPlayer[0].pseudo
-                        
-                        results.result.en = 'Scissors cut the sheet'
+                        results.win.it = localPlayer[0].pseudo
+
+                        results.result.en = 'Scissors cuts paper'
                         results.result.fr = 'Les ciseaux coupent la feuille'
-                    break;
+                        results.result.it = 'Forbici batte carta'
+                        break;
                     case SCISSORS:
                         this.playerEgality()
                         results.win.en = "Egality !"
                         results.win.fr = "Egalité !"
-                    break;
+                        results.win.it = "Parità!"
+                        break;
                 }
-            break;
+                break;
         }
 
         return results
@@ -132,8 +147,8 @@ class Game {
     playerWin(idPlayer) {
         this.players.forEach(player => {
             player.choice = null
-            if(player.idPlayer == idPlayer) {
-                player.point ++
+            if (player.idPlayer == idPlayer) {
+                player.point++
             }
         });
     }
@@ -147,11 +162,11 @@ class Game {
     playerAction(idPlayer, action) {
         var endGame = true
         this.players.forEach(player => {
-            if(player.idPlayer == idPlayer) {
+            if (player.idPlayer == idPlayer) {
                 player.choice = action
             }
 
-            if(player.choice == null) {
+            if (player.choice == null) {
                 endGame = false
             }
         });
@@ -163,7 +178,7 @@ class Game {
         console.log('Player Join')
         this.players.push({
             idPlayer,
-            pseudo : idPlayer,
+            pseudo: idPlayer,
             choice: null,
             point: 0
         })
