@@ -12,6 +12,8 @@ class Game {
             choice: null,
             point: 0
         })
+        this.viewers = []
+        this.messages = []
         console.log('New session : ', this.session)
     }
 
@@ -26,11 +28,21 @@ class Game {
                 pseudo = player.pseudo
             }
         });
+        this.viewers.forEach(player => {
+            if (idPlayer == player.idPlayer) {
+                pseudo = player.pseudo
+            }
+        });
         return pseudo
     }
 
     changePseudo(idPlayer, pseudo) {
         this.players.forEach(player => {
+            if (player.idPlayer == idPlayer) {
+                player.pseudo = pseudo
+            }
+        });
+        this.viewers.forEach(player => {
             if (player.idPlayer == idPlayer) {
                 player.pseudo = pseudo
             }
@@ -176,12 +188,21 @@ class Game {
 
     playerJoin(idPlayer) {
         console.log('Player Join')
-        this.players.push({
-            idPlayer,
-            pseudo: idPlayer,
-            choice: null,
-            point: 0
-        })
+        if (this.players.length < 2) {
+            this.players.push({
+                idPlayer,
+                pseudo: idPlayer,
+                choice: null,
+                point: 0
+            })
+        } else {
+            this.viewers.push({
+                idPlayer,
+                pseudo: idPlayer,
+                choice: null,
+                point: 0
+            })
+        }
     }
 
     playerLeft(idPlayer) {
@@ -191,12 +212,21 @@ class Game {
             player.choice = null
             return player.idPlayer != idPlayer
         })
+        this.viewers = this.viewers.filter((player) => {
+            player.point = 0
+            player.choice = null
+            return player.idPlayer != idPlayer
+        })
     }
-
+    newMess(message) {
+        this.messages.push(message);
+    }
     toJson() {
         return {
             session: this.session,
-            player: this.players
+            player: this.players,
+            viewer: this.viewers,
+            message: this.messages
         }
     }
 }

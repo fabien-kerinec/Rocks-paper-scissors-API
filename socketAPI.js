@@ -23,6 +23,15 @@ io.on('connection', function (socket) {
     pseudo
   }) {
     App.changePseudo(io, socket, idSession, idPlayer, pseudo)
+    var data = {
+      text: `User ${pseudo} connected to chat`,
+      type: 'admin',
+      user: {
+        idPlayer: idPlayer,
+        pseudo: pseudo
+      }
+    }
+    App.addMessage(io, socket, idSession, data);
     socket.emit('yourID', {
       pseudo,
       idPlayer
@@ -49,6 +58,11 @@ io.on('connection', function (socket) {
     choice
   }) => {
     App.setChoice(io, socket, idSession, idPlayer, choice)
+  });
+
+  socket.on('createMessage', (data, cb) => {
+    App.addMessage(io, socket, idSession, data);
+    cb();
   });
 });
 module.exports = socketApi;

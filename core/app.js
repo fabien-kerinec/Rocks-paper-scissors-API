@@ -51,7 +51,7 @@ class App {
     joinChannel(io, socket, oldSession, newSession, idPlayer) {
         console.log(this.ArrayGames);
 
-        if (this.ArrayGames[newSession] != undefined && this.ArrayGames[newSession].getSumPlayers() < 2) {
+        if (this.ArrayGames[newSession] != undefined) {
             this.ArrayGames[oldSession].playerLeft(idPlayer)
             this.newChannel(io, socket, newSession, idPlayer, true)
             return true
@@ -79,6 +79,19 @@ class App {
             io.in(idSession).emit('results', this.ArrayGames[idSession].getResults())
             this.connected(io, this.ArrayGames[idSession])
         }
+    }
+
+    addMessage(io, socket, idSession, data) {
+        console.log(data);
+
+        var message = {
+            text: data.text,
+            user: data.user,
+            type: data.type,
+            time: new Date().toString().slice(15, 24)
+        }
+        this.ArrayGames[idSession].newMess(message);
+        this.connected(io, this.ArrayGames[idSession]);
     }
 
 }
