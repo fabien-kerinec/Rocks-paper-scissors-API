@@ -83,12 +83,22 @@ class App {
 
     addMessage(io, socket, idSession, data) {
         console.log(data);
+        let message;
+        if (!data.type) {
+            message = {
+                text: data.text,
+                user: data.user,
+                type: data.type,
+                time: new Date().toString().slice(15, 24)
+            }
+        } else {
+            message = {
+                text: data.text,
+                user: data.user,
+                type: data.type,
+                time: data.time
+            }
 
-        var message = {
-            text: data.text,
-            user: data.user,
-            type: data.type,
-            time: new Date().toString().slice(15, 24)
         }
         this.ArrayGames[idSession].newMess(message);
         this.connected(io, this.ArrayGames[idSession]);
