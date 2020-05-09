@@ -37,6 +37,7 @@ class Game {
     }
 
     changePseudo(idPlayer, pseudo) {
+
         this.players.forEach(player => {
             if (player.idPlayer == idPlayer) {
                 player.pseudo = pseudo
@@ -188,6 +189,7 @@ class Game {
 
     playerJoin(idPlayer) {
         console.log('Player Join')
+
         if (this.players.length < 2) {
             this.players.push({
                 idPlayer,

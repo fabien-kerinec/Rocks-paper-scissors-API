@@ -1,109 +1,120 @@
-const CoreGame = require('./game')
+const CoreGame = require('./game');
 
 class App {
     constructor(idSession) {
-        this.ArrayGames = []
+        this.ArrayGames = [];
     }
 
     /* Stats */
     getSumGames() {
-        return Object.keys(this.ArrayGames).length
+        return Object.keys(this.ArrayGames).length;
     }
 
     getSumPlayers() {
-        let num = 0
+        let num = 0;
         for (let key in this.ArrayGames) {
-            num += this.ArrayGames[key].getSumPlayers()
+            num += this.ArrayGames[key].getSumPlayers();
         }
-        return num
+        return num;
     }
 
     /* Pseudo */
     changePseudo(io, socket, idSession, idPlayer, pseudo) {
-        this.ArrayGames[idSession].changePseudo(idPlayer, pseudo)
-        this.connected(io, this.ArrayGames[idSession])
+        this.ArrayGames[idSession].changePseudo(idPlayer, pseudo);
+        this.connected(io, this.ArrayGames[idSession]);
     }
 
     /* Connexion */
     connected(io, game) {
-        console.log('Connected : ', game.session)
-        io.in(game.session).emit('connected', this.ArrayGames[game.session].toJson())
+        console.log('Connected : ', game.session);
+        io.in(game.session).emit(
+            'connected',
+            this.ArrayGames[game.session].toJson()
+        );
     }
 
     disconnect(io, socket, idSession, idPlayer) {
-        this.ArrayGames[idSession].playerLeft(idPlayer)
-        this.connected(io, this.ArrayGames[idSession])
-        this.cleanChannel()
+        if (this.ArrayGames[idSession]) {
+
+            this.ArrayGames[idSession].playerLeft(idPlayer);
+            this.connected(io, this.ArrayGames[idSession]);
+            this.cleanChannel();
+        }
     }
 
     /* Channel */
     newChannel(io, socket, idSession, idPlayer, isJoin = false) {
-        if (isJoin) {
-            this.ArrayGames[idSession].playerJoin(idPlayer)
+        if (isJoin || this.ArrayGames[idSession]) {
+            console.log('hey join');
+
+            this.ArrayGames[idSession].playerJoin(idPlayer);
         } else {
-            this.ArrayGames[idSession] = new CoreGame(idSession, idPlayer)
+            console.log('hey create');
+            this.ArrayGames[idSession] = new CoreGame(idSession, idPlayer);
         }
 
-        socket.join(idSession)
-        this.connected(io, this.ArrayGames[idSession].toJson())
+        socket.join(idSession);
+        this.connected(io, this.ArrayGames[idSession].toJson());
     }
 
     joinChannel(io, socket, oldSession, newSession, idPlayer) {
-        console.log(this.ArrayGames);
-
         if (this.ArrayGames[newSession] != undefined) {
-            this.ArrayGames[oldSession].playerLeft(idPlayer)
-            this.newChannel(io, socket, newSession, idPlayer, true)
-            return true
+            this.ArrayGames[oldSession].playerLeft(idPlayer);
+            this.newChannel(io, socket, newSession, idPlayer, true);
+            return true;
         }
 
-        return false
+        return false;
     }
 
     cleanChannel() {
         for (let key in this.ArrayGames) {
             if (this.ArrayGames[key].getSumPlayers() == 0) {
-                delete this.ArrayGames[key]
+                delete this.ArrayGames[key];
             }
         }
     }
 
     /* Choice */
     setChoice(io, socket, idSession, idPlayer, choice) {
-        var endGame = this.ArrayGames[idSession].playerAction(idPlayer, choice)
+        var endGame = this.ArrayGames[idSession].playerAction(idPlayer, choice);
         io.in(idSession).emit('haveChoice', {
-            pseudo: this.ArrayGames[idSession].getPseudo(idPlayer)
-        })
+            pseudo: this.ArrayGames[idSession].getPseudo(idPlayer),
+        });
 
         if (endGame) {
-            io.in(idSession).emit('results', this.ArrayGames[idSession].getResults())
-            this.connected(io, this.ArrayGames[idSession])
+            io.in(idSession).emit('results', this.ArrayGames[idSession].getResults());
+            this.connected(io, this.ArrayGames[idSession]);
         }
     }
 
     addMessage(io, socket, idSession, data) {
-        console.log(data);
         let message;
         if (!data.type) {
             message = {
                 text: data.text,
                 user: data.user,
                 type: data.type,
-                time: new Date().toString().slice(15, 24)
-            }
+                time: new Date().toString().slice(15, 24),
+            };
         } else {
             message = {
                 text: data.text,
                 user: data.user,
                 type: data.type,
-                time: data.time
-            }
-
+                time: data.time,
+            };
         }
         this.ArrayGames[idSession].newMess(message);
         this.connected(io, this.ArrayGames[idSession]);
     }
 
+    checkRoom(io, socket, data) {
+        if (this.ArrayGames[data]) {
+            return true;
+        }
+        return false;
+    }
 }
 
-module.exports = App
+module.exports = App;
