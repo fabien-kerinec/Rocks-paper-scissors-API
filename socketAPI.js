@@ -83,6 +83,7 @@ io.on('connection', function (socket) {
 
   socket.on('createMessage', (data, cb) => {
     App.addMessage(io, socket, idSession, data);
+    io.in(idSession).emit('newMessage');
     cb();
   });
   socket.on('checkRoom', (data, cb) => {
