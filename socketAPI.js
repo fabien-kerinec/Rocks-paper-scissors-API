@@ -19,13 +19,11 @@ io.on('connection', function (socket) {
   // });
   socket.on('newChan', (data) => {
     console.log('on : newChan');
-    console.log(data);
     App.newChannel(io, socket, data, idPlayer);
     idSession = data;
   });
   // Pseudo
   socket.on('changePseudo', function (data) {
-    console.log(idSession);
 
 
     App.changePseudo(io, socket, data.session, idPlayer, data.pseudo);
@@ -73,6 +71,23 @@ io.on('connection', function (socket) {
       idSession = session;
     }
   });
+  socket.on('joinRoom', (data, cb) => {
+    let join = App.joinChannelBis(io, socket, idSession, data);
+    if (join) {
+      io.in(idSession).emit('disableModal', {
+        status: 'ok',
+        player: idPlayer
+      });
+    } else {
+      io.in(idSession).emit('disableModal', {
+        status: 'nok',
+        player: idPlayer
+      });
+    }
+
+
+  });
+
 
   // Choice
   socket.on('choice', ({

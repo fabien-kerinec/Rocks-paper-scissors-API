@@ -37,6 +37,12 @@ class App {
         if (this.ArrayGames[idSession]) {
 
             this.ArrayGames[idSession].playerLeft(idPlayer);
+            if (this.ArrayGames[idSession].players) {
+                console.log('player able');
+                if (this.ArrayGames[idSession].players.length < 2) {
+                    io.in(idSession).emit('joinParty', idPlayer);
+                }
+            }
             this.connected(io, this.ArrayGames[idSession]);
             this.cleanChannel();
         }
@@ -45,16 +51,25 @@ class App {
     /* Channel */
     newChannel(io, socket, idSession, idPlayer, isJoin = false) {
         if (isJoin || this.ArrayGames[idSession]) {
-            console.log('hey join');
 
             this.ArrayGames[idSession].playerJoin(idPlayer);
         } else {
-            console.log('hey create');
             this.ArrayGames[idSession] = new CoreGame(idSession, idPlayer);
         }
 
         socket.join(idSession);
         this.connected(io, this.ArrayGames[idSession].toJson());
+    }
+    joinChannelBis(io, socket, idSession, idPlayer) {
+
+        if (this.ArrayGames[idSession] && this.ArrayGames[idSession].players.length < 2) {
+
+            this.ArrayGames[idSession].playerJoinBis(idPlayer);
+            this.ArrayGames[idSession].viewerLeft(idPlayer);
+            this.connected(io, this.ArrayGames[idSession].toJson());
+            return true;
+        }
+        return false;
     }
 
     joinChannel(io, socket, oldSession, newSession, idPlayer) {
@@ -66,6 +81,7 @@ class App {
 
         return false;
     }
+
 
     cleanChannel() {
         for (let key in this.ArrayGames) {

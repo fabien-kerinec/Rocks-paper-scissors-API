@@ -188,7 +188,6 @@ class Game {
     }
 
     playerJoin(idPlayer) {
-        console.log('Player Join')
 
         if (this.players.length < 2) {
             this.players.push({
@@ -206,19 +205,41 @@ class Game {
             })
         }
     }
+    playerJoinBis(idPlayer) {
+        let player = this.viewers.map(item => {
+            if (item.idPlayer === idPlayer.idPlayer) {
+                return item
+            }
+            return null
+        })
+        player.filter((item) => item);
 
+
+        if (this.players.length < 2 && player) {
+            this.players.push(player[0])
+
+        }
+    }
+    viewerLeft(idPlayer) {
+        this.viewers = this.viewers.filter(function (obj) {
+            return obj.pseudo !== idPlayer;
+        })
+    }
     playerLeft(idPlayer) {
-        console.log('Player Left')
-        this.players = this.players.filter((player) => {
-            player.point = 0
-            player.choice = null
-            return player.idPlayer != idPlayer
-        })
-        this.viewers = this.viewers.filter((player) => {
-            player.point = 0
-            player.choice = null
-            return player.idPlayer != idPlayer
-        })
+        if (this.players.length) {
+            this.players = this.players.filter((player) => {
+                player.point = 0
+                player.choice = null
+                return player.idPlayer != idPlayer
+            })
+        }
+        if (this.viewers.length) {
+            this.viewers = this.viewers.filter((player) => {
+                player.point = 0
+                player.choice = null
+                return player.idPlayer != idPlayer
+            })
+        }
     }
     newMess(message) {
         this.messages.push(message);
