@@ -18,14 +18,14 @@ io.on('connection', function (socket) {
   //   idPlayer,
   // });
   socket.on('newChan', (data) => {
-    console.log('on : newChan');
+    console.log('newChan');
     App.newChannel(io, socket, data, idPlayer);
     idSession = data;
   });
   // Pseudo
   socket.on('changePseudo', function (data) {
 
-
+    console.log('changePseudo');
     App.changePseudo(io, socket, data.session, idPlayer, data.pseudo);
     var m = new Date();
     var dateString =
@@ -59,6 +59,7 @@ io.on('connection', function (socket) {
 
   // Disconnect
   socket.on('disconnect', function () {
+    console.log('disconnect');
     App.disconnect(io, socket, idSession, idPlayer);
   });
 
@@ -66,12 +67,14 @@ io.on('connection', function (socket) {
   socket.on('join', ({
     session
   }) => {
+    console.log('join');
     let isSuccess = App.joinChannel(io, socket, idSession, session, idPlayer);
     if (isSuccess) {
       idSession = session;
     }
   });
   socket.on('joinRoom', (data, cb) => {
+    console.log('joinRoom');
     let join = App.joinChannelBis(io, socket, idSession, data);
     if (join) {
       io.in(idSession).emit('disableModal', {
@@ -93,19 +96,23 @@ io.on('connection', function (socket) {
   socket.on('choice', ({
     choice
   }) => {
+    console.log('choice');
     App.setChoice(io, socket, idSession, idPlayer, choice);
   });
 
   socket.on('createMessage', (data, cb) => {
+    console.log('createMessage');
     App.addMessage(io, socket, idSession, data);
     io.in(idSession).emit('newMessage');
     cb();
   });
   socket.on('checkRoom', (data, cb) => {
+    console.log('checkRoom');
     let check = App.checkRoom(io, socket, data);
     cb(check);
   });
   socket.on('continueGame', (data, cb) => {
+    console.log('continueGame');
     io.in(idSession).emit('resetResult');
   });
 });
